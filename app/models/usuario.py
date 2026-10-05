@@ -20,3 +20,18 @@ class Admin(Usuario):
 
     def obtener_menu(self):
         return ["Gestionar Usuarios", "Gestionar Servicios", "Registrar Pago", "Ver Reportes"]
+
+class Entrenador(Usuario):
+    def __init__(self, id_usuario, email, password, nombre, apellido, estado=True):
+        super().__init__(id_usuario, email, password, nombre, apellido, 'ENTRENADOR', estado)
+
+    def obtener_menu(self):
+        return ["Consultar Clientes", "Registrar Pago", "Ver Cuotas"]
+
+class ClienteUsuario(Usuario):
+    def __init__(self, id_usuario, email, password, nombre, apellido, id_cliente=None, estado=True):
+        super().__init__(id_usuario, email, password, nombre, apellido, 'CLIENTE', estado)
+        self.id_cliente = id_cliente
+
+    def obtener_menu(self):
+        return ["Ver Mis Cuotas", "Ver Historial de Pagos"]
