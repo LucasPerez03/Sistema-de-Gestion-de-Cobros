@@ -1,0 +1,16 @@
+# Entorno virtual
+venv/
+ENV/
+env/
+
+# Variables de entorno y credenciales
+.env
+
+# Cache de Python y compilados
+__pycache__/
+*.pyc
+*.pyo
+
+# Archivos de pruebas locales (opcional)
+test_db.py
+*.log
