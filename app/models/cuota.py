@@ -11,10 +11,10 @@ class Cuota:
         self.estado = estado
         self.pagos = []
 
-    def agregar_pago(self, pago):
+    def agregar_pago(self, pago: Pago):
         self.pagos.append(pago)
 
     def calcular_saldo(self):
-        total_pagado = sum(pago.importe for pago in self.pagos)
+        total_pagado = sum(float(pago.monto) for pago in self.pagos)
         return float(self.importe) - total_pagado
     

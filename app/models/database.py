@@ -19,7 +19,7 @@ class DatabaseConnection:
             self._connection = psycopg2.connect(
                 host=os.getenv("DB_HOST"),
                 port=os.getenv("DB_PORT"),
-                database=os.getenv("DB_NAME"),
+                dbname=os.getenv("DB_NAME"),
                 user=os.getenv("DB_USER"),
                 password=os.getenv("DB_PASSWORD")
             )
@@ -29,7 +29,7 @@ class DatabaseConnection:
             raise e
 
     def get_connection(self):
-        if self._conection is None or self._connection.closed != 0:
+        if self._connection is None or self._connection.closed != 0:
             self._connect()
         return self._connection
     
