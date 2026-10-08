@@ -1,7 +1,10 @@
 from typing import List
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Depends, status
+
 from app.schemas.cliente import ClienteCreate, ClienteResponse
 from app.services.cliente_service import ClienteService
+from app.config.security import obtener_usuario_actual
+from app.schemas.auth import TokenData
 
 router = APIRouter(prefix="/clientes", tags=["Clientes"])
 cliente_service = ClienteService()

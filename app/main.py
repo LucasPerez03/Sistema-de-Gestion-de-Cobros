@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.routers.auth_router import router as auth_router
 from app.routers.usuario_router import router as usuario_router
 from app.routers.cliente_router import router as cliente_router
 from app.routers.servicio_router import router as servicio_router
@@ -25,6 +26,7 @@ app.add_middleware(
 )
 
 # Registro de routers
+app.include_router(auth_router)
 app.include_router(usuario_router)
 app.include_router(cliente_router)
 app.include_router(servicio_router)

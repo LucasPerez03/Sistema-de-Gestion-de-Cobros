@@ -1,8 +1,7 @@
-import os
 import psycopg2
-from dotenv import load_dotenv 
 
-load_dotenv()
+from app.config.settings import settings
+
 
 class DatabaseConnection:
     _instance = None
@@ -17,11 +16,11 @@ class DatabaseConnection:
     def _connect(self):
         try:
             self._connection = psycopg2.connect(
-                host=os.getenv("DB_HOST"),
-                port=os.getenv("DB_PORT"),
-                dbname=os.getenv("DB_NAME"),
-                user=os.getenv("DB_USER"),
-                password=os.getenv("DB_PASSWORD")
+                host=settings.DB_HOST,
+                port=settings.DB_PORT,
+                dbname=settings.DB_NAME,
+                user=settings.DB_USER,
+                password=settings.DB_PASSWORD,
             )
             print("Conexion a la base de datos establecida exitosamente.")
         except Exception as e:
@@ -32,7 +31,7 @@ class DatabaseConnection:
         if self._connection is None or self._connection.closed != 0:
             self._connect()
         return self._connection
-    
+
     def close_connection(self):
         if self._connection is not None and self._connection.closed == 0:
             self._connection.close()
