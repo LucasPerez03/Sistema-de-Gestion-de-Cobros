@@ -1,9 +1,13 @@
 from typing import List, Optional
 from psycopg2.extras import RealDictCursor
 from backend.app.config.database import DatabaseConnection
-from app.repositories.base_repository import BaseRepository
+from backend.app.repositories.base_repository import BaseRepository
 
 class UsuarioRepository(BaseRepository):
+    _CAMPOS_ACTUALIZABLES = {
+        "email", "password", "nombre", "apellido", "rol", "estado",
+    }
+
     def __init__(self):
         self.db = DatabaseConnection()
 
@@ -17,7 +21,6 @@ class UsuarioRepository(BaseRepository):
             return cursor.fetchone()
 
     def obtener_por_email(self, email: str) -> Optional[dict]:
-        """Método específico de UsuarioRepository (no está en BaseRepository)"""
         conn = self.db.get_connection()
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute(
@@ -27,11 +30,7 @@ class UsuarioRepository(BaseRepository):
             return cursor.fetchone()
 
     def obtener_todos(self) -> List[dict]:
-        query = """
-            SELECT id_usuario, email, nombre, apellido, rol, estado
-            FROM usuarios
-            ORDER BY id_usuario
-        """
+        query = "SELECT id_usuario, email, nombre, apellido, rol, estado FROM usuarios ORDER BY id_usuario"
         conn = self.db.get_connection()
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute(query)
@@ -55,7 +54,31 @@ class UsuarioRepository(BaseRepository):
         return nuevo_usuario
 
     def actualizar(self, id_usuario: int, datos: dict) -> Optional[dict]:
-        raise NotImplementedError("Actualizar usuarios todavía no está implementado.")
+        campos, parametros = self._preparar_actualizacion(
+            datos, self._CAMPOS_ACTUALIZABLES
+        )
+        if not campos:
+            return self.obtener_por_id(id_usuario)
+
+        query = f"""
+            UPDATE usuarios 
+            SET {", ".join(campos)}
+            WHERE id_usuario = %(id_usuario)s
+            RETURNING id_usuario, email, nombre, apellido, rol, estado
+        """
+        parametros["id_usuario"] = id_usuario
+        conn = self.db.get_connection()
+        with conn.cursor(cursor_factory=RealDictCursor) as cursor:
+            cursor.execute(query, parametros)
+            usuario_actualizado = cursor.fetchone()
+            conn.commit()
+            return usuario_actualizado
 
     def eliminar(self, id_usuario: int) -> bool:
-        raise NotImplementedError("Eliminar usuarios todavía no está implementado.")
+        query = "UPDATE usuarios SET estado = FALSE WHERE id_usuario = %s RETURNING id_usuario"
+        conn = self.db.get_connection()
+        with conn.cursor() as cursor:
+            cursor.execute(query, (id_usuario,))
+            eliminado = cursor.fetchone() is not None
+            conn.commit()
+            return eliminado

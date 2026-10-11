@@ -1,23 +1,22 @@
 from datetime import date
+from decimal import Decimal
 from typing import List, Optional
-from pydantic import BaseModel
-
+from pydantic import BaseModel, ConfigDict, Field
 from backend.app.schemas.pago import PagoResponse
 
 class CuotaBase(BaseModel):
     id_cliente: int
     id_servicio: int
-    periodo: date
-    importe: float
+    periodo: str  # Ej: "2026-10"
+    importe: Decimal = Field(gt=0)
     fecha_vencimiento: date
 
 class CuotaCreate(CuotaBase):
     pass
 
-class CuotaResponse(BaseModel):
+class CuotaResponse(CuotaBase):
     id_cuota: int
     estado: str
-    pagos: List[PagoResponse] = []
+    pagos: List[PagoResponse] = Field(default_factory=list)
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

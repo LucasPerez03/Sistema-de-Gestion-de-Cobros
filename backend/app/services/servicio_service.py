@@ -1,7 +1,7 @@
-from typing import List, Optional   
+from typing import List, Optional
 from fastapi import HTTPException, status
-from backend.app.repositories.servicio_repository import ServicioRepository
-from backend.app.schemas.servicio import ServicioCreate
+from app.repositories.servicio_repository import ServicioRepository
+from app.schemas.servicio import ServicioCreate, ServicioUpdate
 
 
 class ServicioService:
@@ -25,10 +25,11 @@ class ServicioService:
         datos["estado"] = True
         return self.servicio_repo.crear(datos)
 
-    def actualizar_servicio(
-        self, id_servicio: int, datos_servicio: dict
-    ) -> Optional[dict]:
-        raise NotImplementedError("Actualizar servicios todavía no está implementado.")
+    def actualizar_servicio(self, id_servicio: int, datos_servicio: ServicioUpdate) -> dict:
+        self.obtener_servicio_por_id(id_servicio)
+        datos_dict = datos_servicio.model_dump(exclude_unset=True)
+        return self.servicio_repo.actualizar(id_servicio, datos_dict)
 
     def eliminar_servicio(self, id_servicio: int) -> bool:
-        raise NotImplementedError("Eliminar servicios todavía no está implementado.")
+        self.obtener_servicio_por_id(id_servicio)
+        return self.servicio_repo.eliminar(id_servicio)

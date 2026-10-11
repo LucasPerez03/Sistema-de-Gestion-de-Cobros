@@ -1,9 +1,9 @@
 from datetime import timedelta
 from fastapi import HTTPException, status
 
-from backend.app.config.security import create_access_token
-from backend.app.repositories.usuario_repository import UsuarioRepository
-from backend.app.schemas.auth import LoginRequest, TokenResponse
+from app.config.security import create_access_token
+from app.repositories.usuario_repository import UsuarioRepository
+from app.schemas.auth import LoginRequest, TokenResponse
 from app.services.usuario_service import UsuarioService
 
 
@@ -21,6 +21,12 @@ class AuthService:
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Email o contraseña incorrectos.",
                 headers={"WWW-Authenticate": "Bearer"},
+            )
+
+        if not usuario.get("estado", True):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="El usuario se encuentra inactivo.",
             )
 
         access_token = create_access_token(

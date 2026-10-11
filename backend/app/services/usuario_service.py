@@ -1,10 +1,8 @@
 from typing import List, Optional
-
 import bcrypt
 from fastapi import HTTPException, status
-
 from app.repositories.usuario_repository import UsuarioRepository
-from app.schemas.usuario import UsuarioCreate
+from app.schemas.usuario import UsuarioCreate, UsuarioUpdate
 
 
 class UsuarioService:
@@ -14,12 +12,12 @@ class UsuarioService:
     def _hash_password(self, password: str) -> str:
         return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
-    def _verificar_password(self, plainpassword: str, hashed_password: str) -> bool:
-        return bcrypt.checkpw(plainpassword.encode("utf-8"), hashed_password.encode("utf-8"))
+    def _verificar_password(self, plain_password: str, hashed_password: str) -> bool:
+        return bcrypt.checkpw(plain_password.encode("utf-8"), hashed_password.encode("utf-8"))
 
     def registrar_usuario(self, datos_usuario: UsuarioCreate) -> dict:
         usuario_existente = self.usuario_repo.obtener_por_email(datos_usuario.email)
-        if usuario_existente: 
+        if usuario_existente:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="El email ya se encuentra registrado en el sistema."
@@ -27,7 +25,6 @@ class UsuarioService:
 
         datos_dict = datos_usuario.model_dump()
         datos_dict["password"] = self._hash_password(datos_usuario.password)
-
         datos_dict["estado"] = True
 
         nuevo_usuario = self.usuario_repo.crear(datos_dict)
@@ -44,3 +41,14 @@ class UsuarioService:
                 detail=f"Usuario con ID {id_usuario} no encontrado"
             )
         return usuario
+
+    def actualizar_usuario(self, id_usuario: int, datos_usuario: UsuarioUpdate) -> dict:
+        self.obtener_usuario_por_id(id_usuario)
+        datos_dict = datos_usuario.model_dump(exclude_unset=True)
+        if "password" in datos_dict and datos_dict["password"]:
+            datos_dict["password"] = self._hash_password(datos_dict["password"])
+        return self.usuario_repo.actualizar(id_usuario, datos_dict)
+
+    def eliminar_usuario(self, id_usuario: int) -> bool:
+        self.obtener_usuario_por_id(id_usuario)
+        return self.usuario_repo.eliminar(id_usuario)

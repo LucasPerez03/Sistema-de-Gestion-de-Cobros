@@ -1,10 +1,10 @@
-from datetime import date
 from typing import List, Optional
+from decimal import Decimal
 from fastapi import HTTPException, status
-from backend.app.repositories.cliente_repository import ClienteRepository
-from backend.app.repositories.cuota_repository import CuotaRepository
-from backend.app.repositories.servicio_repository import ServicioRepository
-from backend.app.schemas.cuota import CuotaCreate
+from app.repositories.cliente_repository import ClienteRepository
+from app.repositories.cuota_repository import CuotaRepository
+from app.repositories.servicio_repository import ServicioRepository
+from app.schemas.cuota import CuotaCreate
 
 
 class CuotaService:
@@ -34,7 +34,6 @@ class CuotaService:
             )
         return self.cuota_repo.obtener_por_cliente(id_cliente)
 
-   
     def registrar_cuota(self, datos_cuota: CuotaCreate) -> dict:
         cliente = self.cliente_repo.obtener_por_id(datos_cuota.id_cliente)
         if not cliente:
@@ -49,15 +48,21 @@ class CuotaService:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Servicio con ID {datos_cuota.id_servicio} no encontrado",
             )
-        
+
         datos = datos_cuota.model_dump()
         datos["estado"] = "PENDIENTE"
         return self.cuota_repo.crear(datos)
 
-    def actualizar_cuota(
-        self, id_cuota: int, datos_cuota: dict
-    ) -> Optional[dict]:
-        raise NotImplementedError("Actualizar cuotas todavía no está implementado.")
+    def actualizar_estado_cuota(self, id_cuota: int, saldo_restante: Decimal, importe_total: Decimal) -> dict:
+        if saldo_restante <= 0:
+            nuevo_estado = "PAGADA"
+        elif saldo_restante < importe_total:
+            nuevo_estado = "PARCIAL"
+        else:
+            nuevo_estado = "PENDIENTE"
+
+        return self.cuota_repo.actualizar(id_cuota, {"estado": nuevo_estado})
 
     def eliminar_cuota(self, id_cuota: int) -> bool:
-        raise NotImplementedError("Eliminar cuotas todavía no está implementado.")
+        self.obtener_cuota_por_id(id_cuota)
+        return self.cuota_repo.eliminar(id_cuota)

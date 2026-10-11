@@ -2,8 +2,21 @@ from abc import ABC, abstractmethod
 from typing import List, Optional
 
 class BaseRepository(ABC):
-   
 
+    @staticmethod
+    def _preparar_actualizacion(
+        datos: dict, campos_permitidos: set[str]
+    ) -> tuple[list[str], dict]:
+        datos_validos = {
+            clave: valor
+            for clave, valor in datos.items()
+            if clave in campos_permitidos and valor is not None
+        }
+        asignaciones = [
+            f"{clave} = %({clave})s" for clave in datos_validos
+        ]
+        return asignaciones, datos_validos
+    
     @abstractmethod
     def obtener_por_id(self, id_entidad: int) -> Optional[dict]:
         pass
