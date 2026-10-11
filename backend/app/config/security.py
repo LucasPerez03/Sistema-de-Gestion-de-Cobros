@@ -1,13 +1,12 @@
 from datetime import datetime, timedelta, timezone
-from typing import Optional
+from typing import Optional, Union, List
 from jose import JWTError, jwt
 from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
 
-from backend.app.config.settings import settings
-from backend.app.schemas.auth import RolUsuario, TokenData
+from app.config.settings import settings
+from app.schemas.auth import RolUsuario, TokenData
 
-# Esquema OAuth2 Bearer para la interfaz de Swagger UI
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
@@ -40,7 +39,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> TokenData:
         email: str = payload.get("sub")
         rol: str = payload.get("rol")
 
-        if email is None or id_usuario is None:
+        if email is None or id_usuario is None or rol is None:
             raise credentials_exception
 
         try:
@@ -53,18 +52,18 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> TokenData:
         raise credentials_exception
 
 
-def crear_token_acceso(data: dict, expires_delta: Optional[timedelta] = None) -> str:
-    """Alias backward-compatible para la versión existente."""
-    return create_access_token(data, expires_delta)
+# Aliases explícitos
+crear_token_acceso = create_access_token
+obtener_usuario_actual = get_current_user
 
 
-def obtener_usuario_actual(token: str = Depends(oauth2_scheme)) -> TokenData:
-    """Alias backward-compatible para la versión existente."""
-    return get_current_user(token)
-
-
-def requerir_rol(roles_permitidos: list[RolUsuario]):
-    """Dependencia para verificar que el usuario tenga un rol autorizado."""
+def requerir_rol(roles_permitidos: Union[RolUsuario, List[RolUsuario]]):
+    """
+    Dependencia para verificar que el usuario tenga un rol autorizado.
+    Acepta tanto un rol individual (RolUsuario.ADMIN) como una lista de roles.
+    """
+    if isinstance(roles_permitidos, RolUsuario):
+        roles_permitidos = [roles_permitidos]
 
     def verificador_rol(
         usuario_actual: TokenData = Depends(obtener_usuario_actual),

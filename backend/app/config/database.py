@@ -1,7 +1,5 @@
 import psycopg2
-
-from backend.app.config.settings import settings
-
+from app.config.settings import settings
 
 class DatabaseConnection:
     _instance = None
@@ -22,7 +20,7 @@ class DatabaseConnection:
                 user=settings.DB_USER,
                 password=settings.DB_PASSWORD,
             )
-            print("Conexion a la base de datos establecida exitosamente.")
+            print("Conexión a la base de datos establecida exitosamente.")
         except Exception as e:
             print(f"Error al conectar a la base de datos: {e}")
             raise e
@@ -35,4 +33,4 @@ class DatabaseConnection:
     def close_connection(self):
         if self._connection is not None and self._connection.closed == 0:
             self._connection.close()
-            print("Conexion a la base de datos cerrada exitosamente.")
+            print("Conexión a la base de datos cerrada exitosamente.")

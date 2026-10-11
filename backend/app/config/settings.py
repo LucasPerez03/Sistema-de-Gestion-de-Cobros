@@ -19,5 +19,4 @@ class Settings(BaseSettings):
         extra="ignore"
     )
 
-# Instancia global para usar en toda la aplicación
 settings = Settings()
