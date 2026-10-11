@@ -1,4 +1,4 @@
-from app.models.pago import Pago
+from backend.app.models.pago import Pago
 
 class Cuota:
     def __init__(self, id_cuota, id_cliente, id_servicio, periodo, importe, fecha_vencimiento, estado="PENDIENTE"):

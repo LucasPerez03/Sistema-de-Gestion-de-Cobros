@@ -1,10 +1,10 @@
 from datetime import date
 from typing import List, Optional
 from fastapi import HTTPException, status
-from app.repositories.cliente_repository import ClienteRepository
-from app.repositories.cuota_repository import CuotaRepository
-from app.repositories.servicio_repository import ServicioRepository
-from app.schemas.cuota import CuotaCreate
+from backend.app.repositories.cliente_repository import ClienteRepository
+from backend.app.repositories.cuota_repository import CuotaRepository
+from backend.app.repositories.servicio_repository import ServicioRepository
+from backend.app.schemas.cuota import CuotaCreate
 
 
 class CuotaService:

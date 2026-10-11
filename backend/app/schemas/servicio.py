@@ -10,7 +10,6 @@ class ServicioBase(BaseModel):
 class ServicioCreate(ServicioBase):
     pass
 
-
 class ServicioResponse(ServicioBase):
     id_servicio: int
     estado: bool

@@ -1,11 +1,10 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
-
+from app.schemas.auth import RolUsuario
 class UsuarioBase(BaseModel):
     email: EmailStr 
     nombre: str
     apellido: str
-    rol: str
+    rol: RolUsuario 
 
 class UsuarioCreate(UsuarioBase):
     password: str

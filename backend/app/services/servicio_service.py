@@ -1,7 +1,7 @@
 from typing import List, Optional   
 from fastapi import HTTPException, status
-from app.repositories.servicio_repository import ServicioRepository
-from app.schemas.servicio import ServicioCreate
+from backend.app.repositories.servicio_repository import ServicioRepository
+from backend.app.schemas.servicio import ServicioCreate
 
 
 class ServicioService:

@@ -1,18 +1,18 @@
 from datetime import date
-from typing import List
-
+from typing import List, Optional
 from pydantic import BaseModel
 
-from app.schemas.pago import PagoResponse
+from backend.app.schemas.pago import PagoResponse
 
-
-class CuotaCreate(BaseModel):
+class CuotaBase(BaseModel):
     id_cliente: int
     id_servicio: int
-    periodo: str
+    periodo: date
     importe: float
     fecha_vencimiento: date
 
+class CuotaCreate(CuotaBase):
+    pass
 
 class CuotaResponse(BaseModel):
     id_cuota: int

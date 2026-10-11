@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers.auth_router import router as auth_router
-from app.routers.usuario_router import router as usuario_router
+from backend.app.routers.auth_router import router as auth_router
+from backend.app.routers.usuario_router import router as usuario_router
 from app.routers.cliente_router import router as cliente_router
-from app.routers.servicio_router import router as servicio_router
-from app.routers.cuota_router import router as cuota_router
+from backend.app.routers.servicio_router import router as servicio_router
+from backend.app.routers.cuota_router import router as cuota_router
 
 app = FastAPI(
     title="BYPay API",

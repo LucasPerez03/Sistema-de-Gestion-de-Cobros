@@ -1,8 +1,8 @@
 from typing import List
 from fastapi import APIRouter, Depends, status
 
-from app.config.security import get_current_user
-from app.schemas.auth import TokenData
+from backend.app.config.security import get_current_user
+from backend.app.schemas.auth import TokenData
 from app.schemas.usuario import UsuarioCreate, UsuarioResponse
 from app.services.usuario_service import UsuarioService
 

@@ -4,8 +4,8 @@ from jose import JWTError, jwt
 from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
 
-from app.config.settings import settings
-from app.schemas.auth import TokenData
+from backend.app.config.settings import settings
+from backend.app.schemas.auth import RolUsuario, TokenData
 
 # Esquema OAuth2 Bearer para la interfaz de Swagger UI
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
@@ -43,7 +43,12 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> TokenData:
         if email is None or id_usuario is None:
             raise credentials_exception
 
-        return TokenData(id_usuario=id_usuario, email=email, rol=rol)
+        try:
+            rol_usuario = RolUsuario(rol)
+        except ValueError:
+            raise credentials_exception
+
+        return TokenData(id_usuario=id_usuario, email=email, rol=rol_usuario)
     except (JWTError, TypeError, ValueError):
         raise credentials_exception
 
@@ -56,3 +61,20 @@ def crear_token_acceso(data: dict, expires_delta: Optional[timedelta] = None) ->
 def obtener_usuario_actual(token: str = Depends(oauth2_scheme)) -> TokenData:
     """Alias backward-compatible para la versión existente."""
     return get_current_user(token)
+
+
+def requerir_rol(roles_permitidos: list[RolUsuario]):
+    """Dependencia para verificar que el usuario tenga un rol autorizado."""
+
+    def verificador_rol(
+        usuario_actual: TokenData = Depends(obtener_usuario_actual),
+    ) -> TokenData:
+        if usuario_actual.rol not in roles_permitidos:
+            roles = ", ".join(rol.value for rol in roles_permitidos)
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Acceso denegado: Se requiere uno de los siguientes roles: {roles}",
+            )
+        return usuario_actual
+
+    return verificador_rol

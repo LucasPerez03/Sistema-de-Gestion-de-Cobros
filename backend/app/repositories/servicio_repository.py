@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from psycopg2.extras import RealDictCursor
 
-from app.config.database import DatabaseConnection
+from backend.app.config.database import DatabaseConnection
 from app.repositories.base_repository import BaseRepository
 
 

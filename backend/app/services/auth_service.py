@@ -1,9 +1,9 @@
 from datetime import timedelta
 from fastapi import HTTPException, status
 
-from app.config.security import create_access_token
-from app.repositories.usuario_repository import UsuarioRepository
-from app.schemas.auth import LoginRequest, TokenResponse
+from backend.app.config.security import create_access_token
+from backend.app.repositories.usuario_repository import UsuarioRepository
+from backend.app.schemas.auth import LoginRequest, TokenResponse
 from app.services.usuario_service import UsuarioService
 
 
