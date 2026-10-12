@@ -1,8 +1,8 @@
 from typing import List, Optional
 import bcrypt
 from fastapi import HTTPException, status
-from app.repositories.usuario_repository import UsuarioRepository
-from app.schemas.usuario import UsuarioCreate, UsuarioUpdate
+from backend.app.repositories.usuario_repository import UsuarioRepository
+from backend.app.schemas.usuario import UsuarioCreate, UsuarioUpdate
 
 
 class UsuarioService:

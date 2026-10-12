@@ -1,8 +1,8 @@
 from decimal import Decimal
 from fastapi import HTTPException, status
-from app.repositories.pago_repository import PagoRepository
-from app.services.cuota_service import CuotaService
-from app.schemas.pago import PagoCreate
+from backend.app.repositories.pago_repository import PagoRepository
+from backend.app.services.cuota_service import CuotaService
+from backend.app.schemas.pago import PagoCreate
 
 
 class PagoService:

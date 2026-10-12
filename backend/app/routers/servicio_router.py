@@ -1,9 +1,9 @@
 from typing import List
 from fastapi import APIRouter, status, Depends
-from app.schemas.servicio import ServicioCreate, ServicioUpdate, ServicioResponse
-from app.services.servicio_service import ServicioService
-from app.config.security import obtener_usuario_actual, requerir_rol
-from app.schemas.auth import TokenData
+from backend.app.schemas.servicio import ServicioCreate, ServicioUpdate, ServicioResponse
+from backend.app.services.servicio_service import ServicioService
+from backend.app.config.security import obtener_usuario_actual, requerir_rol
+from backend.app.schemas.auth import RolUsuario, TokenData
 
 router = APIRouter(prefix="/servicios", tags=["Servicios"])
 servicio_service = ServicioService()
@@ -22,7 +22,7 @@ def obtener_servicio(
 @router.post("/", response_model=ServicioResponse, status_code=status.HTTP_201_CREATED)
 def registrar_servicio(
     servicio: ServicioCreate, 
-    usuario_actual: TokenData = Depends(requerir_rol("ADMIN"))
+    usuario_actual: TokenData = Depends(requerir_rol(RolUsuario.ADMIN))
 ):
     return servicio_service.registrar_servicio(servicio)
 
@@ -30,13 +30,13 @@ def registrar_servicio(
 def actualizar_servicio(
     id_servicio: int,
     servicio: ServicioUpdate,
-    usuario_actual: TokenData = Depends(requerir_rol("ADMIN"))
+    usuario_actual: TokenData = Depends(requerir_rol(RolUsuario.ADMIN))
 ):
     return servicio_service.actualizar_servicio(id_servicio, servicio)
 
 @router.delete("/{id_servicio}", status_code=status.HTTP_204_NO_CONTENT)
 def eliminar_servicio(
     id_servicio: int,
-    usuario_actual: TokenData = Depends(requerir_rol("ADMIN"))
+    usuario_actual: TokenData = Depends(requerir_rol(RolUsuario.ADMIN))
 ):
     servicio_service.eliminar_servicio(id_servicio)

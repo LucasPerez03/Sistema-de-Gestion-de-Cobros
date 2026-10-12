@@ -58,6 +58,19 @@ class TestSecurity(unittest.TestCase):
 
         self.assertEqual(context.exception.status_code, 403)
 
+    def test_requerir_rol_individual_rechaza_rol_no_permitido(self):
+        dependency = requerir_rol(RolUsuario.ADMIN)
+        usuario = TokenData(
+            id_usuario=1,
+            email="usuario@bypay.com",
+            rol=RolUsuario.CLIENTE,
+        )
+
+        with self.assertRaises(HTTPException) as context:
+            dependency(usuario)
+
+        self.assertEqual(context.exception.status_code, 403)
+
 
 if __name__ == "__main__":
     unittest.main()

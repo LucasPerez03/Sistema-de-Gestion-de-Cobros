@@ -1,6 +1,6 @@
 import unittest
 
-from app.services.usuario_service import UsuarioService
+from backend.app.services.usuario_service import UsuarioService
 
 
 class TestUsuarioService(unittest.TestCase):

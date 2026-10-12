@@ -2,12 +2,13 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional, Union, List
 from jose import JWTError, jwt
 from fastapi import HTTPException, status, Depends
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials  # <-- Cambiado
 
-from app.config.settings import settings
-from app.schemas.auth import RolUsuario, TokenData
+from backend.app.config.settings import settings
+from backend.app.schemas.auth import RolUsuario, TokenData
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+# Usamos HTTPBearer para que Swagger pida el Bearer Token en un campo simple
+security_scheme = HTTPBearer()
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
@@ -25,8 +26,10 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 
-def get_current_user(token: str = Depends(oauth2_scheme)) -> TokenData:
+def get_current_user(auth: HTTPAuthorizationCredentials = Depends(security_scheme)) -> TokenData:
     """Valida el token JWT en endpoints protegidos."""
+    token = auth.credentials  # <-- Extraemos el string del token del header Bearer
+
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="No se pudieron validar las credenciales o el token ha expirado.",

@@ -1,5 +1,5 @@
 import psycopg2
-from app.config.settings import settings
+from backend.app.config.settings import settings
 
 class DatabaseConnection:
     _instance = None

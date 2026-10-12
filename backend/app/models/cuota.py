@@ -3,7 +3,7 @@ from datetime import date
 from typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:
-    from app.models.pago import Pago
+    from backend.app.models.pago import Pago
 
 class Cuota:
     def __init__(

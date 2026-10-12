@@ -1,8 +1,8 @@
 from fastapi import APIRouter, status, Depends
-from app.schemas.pago import PagoCreate, PagoResponse
-from app.services.pago_service import PagoService
-from app.config.security import obtener_usuario_actual
-from app.schemas.auth import TokenData
+from backend.app.schemas.pago import PagoCreate, PagoResponse
+from backend.app.services.pago_service import PagoService
+from backend.app.config.security import obtener_usuario_actual
+from backend.app.schemas.auth import TokenData
 
 router = APIRouter(prefix="/pagos", tags=["Pagos"])
 pago_service = PagoService()
