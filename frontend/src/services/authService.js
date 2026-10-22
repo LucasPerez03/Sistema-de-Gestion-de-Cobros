@@ -17,3 +17,8 @@ export const getPerfilService = async () => {
 export const logoutService = () => {
   localStorage.removeItem('token');
 };
+
+export const registerService = async (userData) => {
+  const response = await api.post('/auth/register', userData);
+  return response.data;
+};

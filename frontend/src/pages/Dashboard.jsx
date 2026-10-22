@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getPerfilService, logoutService } from '../services/authService';
+import './Dashboard.css';
 
 export const Dashboard = () => {
   const [usuario, setUsuario] = useState(null);
@@ -8,7 +9,6 @@ export const Dashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Obtenemos los datos del usuario logueado 
     const fetchPerfil = async () => {
       try {
         const data = await getPerfilService();
@@ -28,29 +28,36 @@ export const Dashboard = () => {
     navigate('/login');
   };
 
-  if (error) return <p>{error}</p>;
+  if (error) return <p className="mensaje-error">{error}</p>;
   if (!usuario) return <p>Cargando datos del usuario...</p>;
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+    <div className="dashboard-container">
+      <header className="dashboard-header">
         <h1>BYPay - Panel Principal</h1>
-        <button onClick={handleLogout} style={{ padding: '8px 16px', cursor: 'pointer' }}>
+        <button onClick={handleLogout} className="btn-logout">
           Cerrar Sesión
         </button>
       </header>
 
-      <div style={{ background: '#f4f4f4', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
+      <div className="user-card">
         <h3>Bienvenido/a, {usuario.nombre || usuario.email}</h3>
         <p><strong>Email:</strong> {usuario.email}</p>
         <p><strong>Rol:</strong> {usuario.rol}</p>
       </div>
 
       <nav>
-        <ul>
-          <li>Gestión de Clientes</li>
-          <li>Gestión de Cuotas</li>
-          <li>Registrar Pagos</li>
+        <ul className="nav-list">
+          <li className="nav-item" onClick={() => navigate('/clientes')}>
+            Gestión de Clientes
+          </li>
+          {usuario.rol === 'ADMIN' && (
+            <li className="nav-item" onClick={() => navigate('/usuarios')}>
+              Gestión de Usuarios
+            </li>
+          )}
+          <li className="nav-item">Gestión de Cuotas</li>
+          <li className="nav-item">Registrar Pagos</li>
         </ul>
       </nav>
     </div>

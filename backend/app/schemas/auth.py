@@ -1,10 +1,6 @@
-from enum import Enum
+from typing import Optional
 from pydantic import BaseModel, EmailStr
-
-class RolUsuario(str, Enum):
-    ADMIN = "ADMIN"
-    ENTRENADOR = "ENTRENADOR"
-    CLIENTE = "CLIENTE"
+from backend.app.models.usuario import RolUsuario
 
 class LoginRequest(BaseModel):
     email: EmailStr
@@ -18,3 +14,4 @@ class TokenData(BaseModel):
     id_usuario: int
     email: EmailStr
     rol: RolUsuario
+    id_cliente: Optional[int] = None

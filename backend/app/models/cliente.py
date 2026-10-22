@@ -1,5 +1,8 @@
 from datetime import date
-from typing import Optional
+from typing import Optional, List, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from backend.app.models.cuota import Cuota
 
 class Cliente:
     def __init__(
@@ -23,6 +26,14 @@ class Cliente:
         self.fecha_nacimiento = fecha_nacimiento
         self.fecha_alta = fecha_alta or date.today()
         self.estado = estado
+        self.activo = estado
+        self.cuotas: List["Cuota"] = []  # Composición 1 a 0..* con Cuota
 
     def nombre_completo(self) -> str:
         return f"{self.nombre} {self.apellido}"
+
+    def agregar_cuota(self, cuota: "Cuota") -> None:
+        self.cuotas.append(cuota)
+
+    def consultar_cuotas(self) -> List["Cuota"]:
+        return self.cuotas

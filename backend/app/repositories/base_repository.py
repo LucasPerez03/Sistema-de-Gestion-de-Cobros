@@ -1,5 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
+from contextlib import contextmanager
+from psycopg2.extras import RealDictCursor
+
 
 class BaseRepository(ABC):
 
@@ -36,3 +39,12 @@ class BaseRepository(ABC):
     @abstractmethod
     def eliminar(self, id_entidad: int) -> bool:
         pass
+    @contextmanager
+    def transaccion(conn):
+        try:
+            with conn.cursor(cursor_factory=RealDictCursor) as cursor:
+                yield cursor
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            raise

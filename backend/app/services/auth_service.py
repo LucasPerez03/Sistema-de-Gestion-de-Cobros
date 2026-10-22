@@ -34,6 +34,7 @@ class AuthService:
                 "id_usuario": usuario["id_usuario"],
                 "sub": usuario["email"],
                 "rol": usuario["rol"],
+                "id_cliente": usuario.get("id_cliente")
             },
             timedelta(minutes=120),
         )

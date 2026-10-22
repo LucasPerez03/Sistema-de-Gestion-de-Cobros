@@ -25,8 +25,11 @@ class ClienteService:
         datos["estado"] = True
         return self.cliente_repo.crear(datos)
 
-    def actualizar_cliente(self, id_cliente: int, datos_cliente: dict) -> Optional[dict]:
-        raise NotImplementedError("Actualizar clientes todavía no está implementado.")
+    def actualizar_cliente(self, id_cliente: int, datos_cliente: ClienteUpdate) -> Optional[dict]:
+        self.obtener_cliente_por_id(id_cliente)
+        datos_dict = datos_cliente.model_dump(exclude_unset=True)
+        return self.cliente_repo.actualizar(id_cliente, datos_dict)
 
     def eliminar_cliente(self, id_cliente: int) -> bool:
-        raise NotImplementedError("Eliminar clientes todavía no está implementado.")
+        self.obtener_cliente_por_id(id_cliente)
+        return self.cliente_repo.eliminar(id_cliente)

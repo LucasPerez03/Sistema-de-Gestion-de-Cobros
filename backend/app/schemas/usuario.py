@@ -20,7 +20,7 @@ class UsuarioUpdate(BaseModel):
     rol: Optional[RolUsuario] = None
     password: Optional[str] = None
     estado: Optional[bool] = None
-
+    id_cliente: Optional[int] = None
 
 class UsuarioResponse(UsuarioBase):
     id_usuario: int

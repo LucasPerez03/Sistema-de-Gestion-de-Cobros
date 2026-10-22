@@ -3,7 +3,6 @@ from fastapi import HTTPException, status
 from backend.app.repositories.servicio_repository import ServicioRepository
 from backend.app.schemas.servicio import ServicioCreate, ServicioUpdate
 
-
 class ServicioService:
     def __init__(self):
         self.servicio_repo = ServicioRepository()

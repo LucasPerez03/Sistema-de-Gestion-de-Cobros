@@ -2,8 +2,8 @@ from typing import List
 from fastapi import APIRouter, Depends, status
 from backend.app.schemas.cliente import ClienteCreate, ClienteUpdate, ClienteResponse
 from backend.app.services.cliente_service import ClienteService
-from backend.app.config.security import obtener_usuario_actual
-from backend.app.schemas.auth import TokenData
+from backend.app.config.security import obtener_usuario_actual, requerir_rol
+from backend.app.schemas.auth import RolUsuario, TokenData
 
 router = APIRouter(prefix="/clientes", tags=["Clientes"])
 cliente_service = ClienteService()
@@ -22,7 +22,7 @@ def obtener_cliente(
 @router.post("/", response_model=ClienteResponse, status_code=status.HTTP_201_CREATED)
 def registrar_cliente(
     cliente: ClienteCreate,
-    usuario_actual: TokenData = Depends(obtener_usuario_actual)
+    usuario_actual: TokenData = Depends(requerir_rol(RolUsuario.ADMIN))
 ):
     return cliente_service.registrar_cliente(cliente)
 
@@ -30,13 +30,13 @@ def registrar_cliente(
 def actualizar_cliente(
     id_cliente: int,
     cliente: ClienteUpdate,
-    usuario_actual: TokenData = Depends(obtener_usuario_actual)
+    usuario_actual: TokenData = Depends(requerir_rol(RolUsuario.ADMIN))
 ):
     return cliente_service.actualizar_cliente(id_cliente, cliente)
 
 @router.delete("/{id_cliente}", status_code=status.HTTP_204_NO_CONTENT)
 def eliminar_cliente(
     id_cliente: int,
-    usuario_actual: TokenData = Depends(obtener_usuario_actual)
+    usuario_actual: TokenData = Depends(requerir_rol(RolUsuario.ADMIN))
 ):
     cliente_service.eliminar_cliente(id_cliente)

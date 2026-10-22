@@ -14,6 +14,10 @@ class Settings(BaseSettings):
     DB_NAME: str = "bypay_db"
     DB_USER: str = "postgres"
     DB_PASSWORD: str = ""
+    FIRST_SUPERUSER_EMAIL: str = "admin@bypay.com"
+    FIRST_SUPERUSER_PASSWORD: str = "admin123"
+    FIRST_SUPERUSER_NOMBRE: str = "Lucas"
+    FIRST_SUPERUSER_APELLIDO: str = "Perez"
 
     model_config = SettingsConfigDict(
         env_file=Path(__file__).resolve().parents[2] / ".env",

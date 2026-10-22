@@ -44,3 +44,12 @@ class ClienteUsuario(Usuario):
 
     def obtener_menu(self) -> list[str]:
         return ["Ver Mis Cuotas", "Ver Historial de Pagos"]
+
+def crear_entidad_usuario(datos: dict) -> Usuario:
+    rol = RolUsuario(datos["rol"])
+    if rol == RolUsuario.ADMIN:
+        return Admin(datos["id_usuario"], datos["email"], datos.get("password", ""), datos.get("nombre", ""), datos.get("apellido", ""), datos.get("estado", True))
+    elif rol == RolUsuario.ENTRENADOR:
+        return Entrenador(datos["id_usuario"], datos["email"], datos.get("password", ""), datos.get("nombre", ""), datos.get("apellido", ""), datos.get("estado", True))
+    else:
+        return ClienteUsuario(datos["id_usuario"], datos["email"], datos.get("password", ""), datos.get("nombre", ""), datos.get("apellido", ""), datos.get("id_cliente"), datos.get("estado", True))

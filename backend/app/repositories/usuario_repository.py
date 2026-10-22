@@ -5,7 +5,7 @@ from backend.app.repositories.base_repository import BaseRepository
 
 class UsuarioRepository(BaseRepository):
     _CAMPOS_ACTUALIZABLES = {
-        "email", "password", "nombre", "apellido", "rol", "estado",
+        "email", "password", "nombre", "apellido", "rol", "estado","id_cliente"
     }
 
     def __init__(self):
@@ -15,7 +15,7 @@ class UsuarioRepository(BaseRepository):
         conn = self.db.get_connection()
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute(
-                "SELECT id_usuario, email, password, nombre, apellido, rol, estado FROM usuarios WHERE id_usuario = %s",
+                "SELECT id_usuario, email, password, nombre, apellido, rol, estado, id_cliente FROM usuarios WHERE id_usuario = %s",
                 (id_usuario,)
             )
             return cursor.fetchone()
@@ -24,23 +24,24 @@ class UsuarioRepository(BaseRepository):
         conn = self.db.get_connection()
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute(
-                "SELECT id_usuario, email, password, nombre, apellido, rol, estado FROM usuarios WHERE email = %s",
+                "SELECT id_usuario, email, password, nombre, apellido, rol, estado, id_cliente FROM usuarios WHERE email = %s",
                 (email,)
             )
             return cursor.fetchone()
 
     def obtener_todos(self) -> List[dict]:
-        query = "SELECT id_usuario, email, nombre, apellido, rol, estado FROM usuarios ORDER BY id_usuario"
+        query = "SELECT id_usuario, email, nombre, apellido, rol, estado, id_cliente FROM usuarios ORDER BY id_usuario"
         conn = self.db.get_connection()
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute(query)
             return cursor.fetchall()
 
     def crear(self, datos: dict) -> dict:
+        datos.setdefault("id_cliente", None)
         query = """
-            INSERT INTO usuarios (email, password, nombre, apellido, rol, estado)
-            VALUES (%(email)s, %(password)s, %(nombre)s, %(apellido)s, %(rol)s, %(estado)s)
-            RETURNING id_usuario, email, nombre, apellido, rol, estado
+            INSERT INTO usuarios (email, password, nombre, apellido, rol, estado, id_cliente)
+            VALUES (%(email)s, %(password)s, %(nombre)s, %(apellido)s, %(rol)s, %(estado)s, %(id_cliente)s)
+            RETURNING id_usuario, email, nombre, apellido, rol, estado, id_cliente
         """
         conn = self.db.get_connection()
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
@@ -64,7 +65,7 @@ class UsuarioRepository(BaseRepository):
             UPDATE usuarios 
             SET {", ".join(campos)}
             WHERE id_usuario = %(id_usuario)s
-            RETURNING id_usuario, email, nombre, apellido, rol, estado
+            RETURNING id_usuario, email, nombre, apellido, rol, estado, id_cliente
         """
         parametros["id_usuario"] = id_usuario
         conn = self.db.get_connection()

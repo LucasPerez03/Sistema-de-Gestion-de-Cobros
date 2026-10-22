@@ -2,14 +2,12 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional, Union, List
 from jose import JWTError, jwt
 from fastapi import HTTPException, status, Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials  # <-- Cambiado
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from backend.app.config.settings import settings
 from backend.app.schemas.auth import RolUsuario, TokenData
 
-# Usamos HTTPBearer para que Swagger pida el Bearer Token en un campo simple
 security_scheme = HTTPBearer()
-
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     """Genera un JWT firmado con los valores de settings."""
@@ -28,7 +26,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
 
 def get_current_user(auth: HTTPAuthorizationCredentials = Depends(security_scheme)) -> TokenData:
     """Valida el token JWT en endpoints protegidos."""
-    token = auth.credentials  # <-- Extraemos el string del token del header Bearer
+    token = auth.credentials 
 
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -41,6 +39,10 @@ def get_current_user(auth: HTTPAuthorizationCredentials = Depends(security_schem
         id_usuario: int = payload.get("id_usuario")
         email: str = payload.get("sub")
         rol: str = payload.get("rol")
+        id_usuario: int = payload.get("id_usuario")
+        email: str = payload.get("sub")
+        rol: str = payload.get("rol")
+        id_cliente: Optional[int] = payload.get("id_cliente")
 
         if email is None or id_usuario is None or rol is None:
             raise credentials_exception
@@ -50,7 +52,12 @@ def get_current_user(auth: HTTPAuthorizationCredentials = Depends(security_schem
         except ValueError:
             raise credentials_exception
 
-        return TokenData(id_usuario=id_usuario, email=email, rol=rol_usuario)
+        return TokenData(
+            id_usuario=id_usuario,
+            email=email,
+            rol=rol_usuario,
+            id_cliente=id_cliente,
+        )
     except (JWTError, TypeError, ValueError):
         raise credentials_exception
 
