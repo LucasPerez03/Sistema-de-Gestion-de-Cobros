@@ -37,12 +37,22 @@ class CuotaRepository(BaseRepository):
                 return cursor.fetchall()
 
     def obtener_por_cliente(self, id_cliente: int) -> List[dict]:
+        query = """
+            SELECT 
+                c.*,
+                cl.nombre AS cliente_nombre,
+                cl.apellido AS cliente_apellido,
+                cl.dni AS cliente_dni,
+                s.nombre AS servicio_nombre
+            FROM cuotas c
+            JOIN clientes cl ON c.id_cliente = cl.id_cliente
+            JOIN servicios s ON c.id_servicio = s.id_servicio
+            WHERE c.id_cliente = %s
+            ORDER BY c.fecha_vencimiento DESC
+        """
         conn = self.db.get_connection()
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
-            cursor.execute(
-                "SELECT * FROM cuotas WHERE id_cliente = %s ORDER BY fecha_vencimiento DESC",
-                (id_cliente,)
-            )
+            cursor.execute(query, (id_cliente,))
             return cursor.fetchall()
 
     def crear(self, datos: dict) -> dict:

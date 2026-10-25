@@ -1,8 +1,5 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager
-from fastapi import FastAPI
-from backend.app.config.init_db import init_admin
 
 from backend.app.routers import (
     auth_router,
@@ -13,17 +10,10 @@ from backend.app.routers import (
     usuario_router,
 )
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Se ejecuta automáticamente al iniciar el servidor Uvicorn
-    init_admin()
-    yield
-
 app = FastAPI(
     title="BYPay API",
     description="Sistema de gestión de cuotas y pagos",
     version="1.0.0",
-    lifespan=lifespan,
 )
 
 # Configuración de CORS para conectar con el Frontend 

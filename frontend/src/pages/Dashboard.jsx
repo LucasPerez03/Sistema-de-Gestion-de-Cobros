@@ -48,16 +48,29 @@ export const Dashboard = () => {
 
       <nav>
         <ul className="nav-list">
-          <li className="nav-item" onClick={() => navigate('/clientes')}>
-            Gestión de Clientes
-          </li>
+          {usuario.rol !== 'CLIENTE' && (
+            <li className="nav-item" onClick={() => navigate('/clientes')}>
+              Gestión de Clientes
+            </li>
+          )}
+
           {usuario.rol === 'ADMIN' && (
             <li className="nav-item" onClick={() => navigate('/usuarios')}>
               Gestión de Usuarios
             </li>
           )}
-          <li className="nav-item">Gestión de Cuotas</li>
-          <li className="nav-item">Registrar Pagos</li>
+
+          {usuario.rol !== 'CLIENTE' && (
+            <li className="nav-item" onClick={() => navigate('/servicios')}>
+              Gestión de Servicios / Planes
+            </li>
+          )}
+
+          <li className="nav-item" onClick={() => navigate('/cuotas')}>
+            {usuario.rol === 'CLIENTE'
+              ? 'Mis Cuotas e Historial de Pagos'
+              : 'Gestión de Cuotas y Cobros'}
+          </li>
         </ul>
       </nav>
     </div>

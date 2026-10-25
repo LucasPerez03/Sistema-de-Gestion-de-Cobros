@@ -1,7 +1,7 @@
 from typing import List, Optional
 from fastapi import HTTPException, status
 from backend.app.repositories.cliente_repository import ClienteRepository
-from backend.app.schemas.cliente import ClienteCreate
+from backend.app.schemas.cliente import ClienteCreate, ClienteUpdate
 
 
 class ClienteService:

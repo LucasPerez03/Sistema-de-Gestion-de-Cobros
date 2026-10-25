@@ -3,18 +3,20 @@ import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
 import { Clientes } from './pages/Clientes';
 import { Usuarios } from './pages/Usuarios';
+import { Servicios } from './pages/Servicios';
+import { Cuotas } from './pages/Cuotas';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Rutas de la App */}
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/clientes" element={<Clientes />} /> 
-        <Route path="/register" element={<Register />} />
+        <Route path="/clientes" element={<Clientes />} />
         <Route path="/usuarios" element={<Usuarios />} />
+        <Route path="/servicios" element={<Servicios />} />
+        <Route path="/cuotas" element={<Cuotas />} />
       </Routes>
     </BrowserRouter>
   );
