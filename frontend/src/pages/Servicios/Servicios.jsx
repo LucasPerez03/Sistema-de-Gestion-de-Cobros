@@ -4,8 +4,8 @@ import {
   getServiciosService,
   createServicioService,
   updateServicioService,
-} from '../services/dataService';
-import { getPerfilService } from '../services/authService';
+} from '../../services/dataService';
+import { getPerfilService } from '../../services/authService';
 import './Servicios.css';
 
 export const Servicios = () => {

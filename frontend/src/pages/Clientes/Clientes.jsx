@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getClientesService, createClienteService } from '../services/dataService';
+import { getClientesService, createClienteService } from '../../services/dataService';
 import './Clientes.css';
 
 export const Clientes = () => {

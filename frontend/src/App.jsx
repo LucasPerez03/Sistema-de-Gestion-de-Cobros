@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Login } from './pages/Login';
-import { Dashboard } from './pages/Dashboard';
-import { Clientes } from './pages/Clientes';
-import { Usuarios } from './pages/Usuarios';
-import { Servicios } from './pages/Servicios';
-import { Cuotas } from './pages/Cuotas';
+import { Login } from './pages/Login/Login';
+import { Dashboard } from './pages/Dashboard/Dashboard';
+import { Clientes } from './pages/Clientes/Clientes';
+import { Usuarios } from './pages/Usuarios/Usuarios';
+import { Servicios } from './pages/Servicios/Servicios';
+import { Cuotas } from './pages/Cuotas/Cuotas';
 
 function App() {
   return (

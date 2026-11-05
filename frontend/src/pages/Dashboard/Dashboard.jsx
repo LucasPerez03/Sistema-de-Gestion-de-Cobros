@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getPerfilService, logoutService } from '../services/authService';
+import { getPerfilService, logoutService } from '../../services/authService';
 import './Dashboard.css';
 
 export const Dashboard = () => {

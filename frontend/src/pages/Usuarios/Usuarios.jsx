@@ -4,7 +4,7 @@ import {
   getUsuariosService,
   createUsuarioService,
   getClientesService,
-} from '../services/dataService';
+} from '../../services/dataService';
 import './Usuarios.css';
 
 export const Usuarios = () => {

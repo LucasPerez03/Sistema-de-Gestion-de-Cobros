@@ -18,7 +18,7 @@ export const Cuotas = () => {
   const [clientes, setClientes] = useState([]);
   const [servicios, setServicios] = useState([]);
 
-  // Estados para emitir cuota (ADMIN)
+  // Estados para emitir cuota
   const [idCliente, setIdCliente] = useState('');
   const [idServicio, setIdServicio] = useState('');
   const [periodo, setPeriodo] = useState('2026-10');
@@ -110,7 +110,7 @@ export const Cuotas = () => {
     setComprobanteRef('');
   };
 
-  // Vista previa del Patrón Strategy en el Frontend (Espejo del Backend)
+  // Vista previa del Patrón Strategy en el Frontend
   const calcularVistaPreviaStrategy = (montoBase, medio) => {
     const num = Number(montoBase) || 0;
     if (medio === 'EFECTIVO') return (num * 0.9).toFixed(2);
@@ -158,7 +158,7 @@ export const Cuotas = () => {
       {mensaje && <p className="mensaje-exito">{mensaje}</p>}
       {error && <p className="mensaje-error">{error}</p>}
 
-      {/* 1. Formulario de Emisión de Cuota (Solo ADMIN) */}
+      {/* 1. Formulario de Emisión de Cuota*/}
       {usuario?.rol === 'ADMIN' && (
         <div className="form-card">
           <h3>Emitir Nueva Cuota Mensual</h3>
