@@ -1,5 +1,25 @@
 .usuarios-container {
+  width: min(100% - 40px, 1100px);
   padding: 24px;
-  max-width: 1100px;
   margin: 0 auto;
+}
+
+.usuarios-container > h3 {
+  margin: 28px 0 14px;
+}
+
+.usuarios-container .btn-toggle,
+.usuarios-container .btn-danger,
+.usuarios-container .btn-cancel {
+  height: 34px;
+  min-height: 34px;
+  padding: 7px 11px;
+  font-size: 0.84rem;
+}
+
+@media (max-width: 640px) {
+  .usuarios-container {
+    width: min(100% - 28px, 1100px);
+    padding-top: 22px;
+  }
 }

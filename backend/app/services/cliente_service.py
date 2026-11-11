@@ -1,5 +1,6 @@
 from typing import List, Optional
 from fastapi import HTTPException, status
+from psycopg2.errors import UniqueViolation
 from backend.app.repositories.cliente_repository import ClienteRepository
 from backend.app.schemas.cliente import ClienteCreate, ClienteUpdate
 
@@ -23,12 +24,24 @@ class ClienteService:
     def registrar_cliente(self, datos_cliente: ClienteCreate) -> dict:
         datos = datos_cliente.model_dump()
         datos["estado"] = True
-        return self.cliente_repo.crear(datos)
+        try:
+            return self.cliente_repo.crear(datos)
+        except UniqueViolation as exc:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Ya existe un cliente con ese DNI.",
+            ) from exc
 
     def actualizar_cliente(self, id_cliente: int, datos_cliente: ClienteUpdate) -> Optional[dict]:
         self.obtener_cliente_por_id(id_cliente)
         datos_dict = datos_cliente.model_dump(exclude_unset=True)
-        return self.cliente_repo.actualizar(id_cliente, datos_dict)
+        try:
+            return self.cliente_repo.actualizar(id_cliente, datos_dict)
+        except UniqueViolation as exc:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Ya existe un cliente con ese DNI.",
+            ) from exc
 
     def eliminar_cliente(self, id_cliente: int) -> bool:
         self.obtener_cliente_por_id(id_cliente)

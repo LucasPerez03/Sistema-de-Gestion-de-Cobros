@@ -63,6 +63,15 @@ export const Servicios = () => {
   };
 
   const toggleEstadoServicio = async (servicio) => {
+    if (
+      servicio.estado &&
+      !window.confirm(
+        `¿Confirmás la desactivación del plan "${servicio.nombre}"?`
+      )
+    ) {
+      return;
+    }
+
     setError('');
     setMensaje('');
     try {
@@ -142,7 +151,7 @@ export const Servicios = () => {
                   <button
                     type="button"
                     onClick={() => toggleEstadoServicio(s)}
-                    className="btn-toggle"
+                    className={s.estado ? 'btn-danger' : 'btn-toggle'}
                   >
                     {s.estado ? 'Desactivar' : 'Activar'}
                   </button>

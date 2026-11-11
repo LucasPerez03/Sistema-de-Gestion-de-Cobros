@@ -1,4 +1,5 @@
 from typing import List, Optional
+from psycopg2.errors import UniqueViolation
 from psycopg2.extras import RealDictCursor
 from backend.app.config.database import DatabaseConnection
 from backend.app.repositories.base_repository import BaseRepository
@@ -63,7 +64,11 @@ class CuotaRepository(BaseRepository):
         """
         conn = self.db.get_connection()
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
-            cursor.execute(query, datos)
+            try:
+                cursor.execute(query, datos)
+            except UniqueViolation:
+                conn.rollback()
+                raise
             cuota = cursor.fetchone()
             conn.commit()
 

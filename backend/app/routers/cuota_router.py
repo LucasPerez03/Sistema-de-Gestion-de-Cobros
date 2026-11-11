@@ -37,6 +37,13 @@ def registrar_cuota(
 ):
     return cuota_service.registrar_cuota(cuota)
 
+@router.post("/{id_cuota}/anular", response_model=CuotaResponse, status_code=status.HTTP_200_OK)
+def anular_cuota(
+    id_cuota: int,
+    usuario_actual: TokenData = Depends(requerir_rol(RolUsuario.ADMIN))
+):
+    return cuota_service.anular_cuota(id_cuota)
+
 @router.delete("/{id_cuota}", status_code=status.HTTP_204_NO_CONTENT)
 def eliminar_cuota(
     id_cuota: int,

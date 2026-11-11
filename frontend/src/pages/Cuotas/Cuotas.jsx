@@ -7,6 +7,7 @@ import {
   getServiciosService,
   registrarPagoService,
   getPagosService,
+  anularCuotaService,
 } from '../../services/dataService';
 import { getPerfilService } from '../../services/authService';
 import './Cuotas.css';
@@ -52,7 +53,7 @@ export const Cuotas = () => {
       setPagos(pagosData);
       if (clientesData) setClientes(clientesData);
       if (serviciosData) setServicios(serviciosData.filter((s) => s.estado));
-    } catch (err) {
+    } catch {
       setError('Error al cargar la información de cuotas y pagos.');
     }
   };
@@ -93,6 +94,10 @@ export const Cuotas = () => {
     } catch (err) {
       if (err.response?.status === 403) {
         setError('Solo el rol ADMIN puede emitir cuotas.');
+      } else if (err.response?.status === 409) {
+        setError(
+          err.response?.data?.detail || 'Ya existe una cuota para ese período.'
+        );
       } else if (err.response?.status === 422) {
         setError('Formato inválido. Verificá que el período sea YYYY-MM (ej. 2026-10).');
       } else {
@@ -108,6 +113,22 @@ export const Cuotas = () => {
     setMontoPago(cuota.saldo_pendiente ?? cuota.importe);
     setMedioPago('EFECTIVO');
     setComprobanteRef('');
+  };
+
+  const handleAnularCuota = async (cuota) => {
+    if (!window.confirm(`¿Querés anular la cuota ${cuota.periodo}? Se conservará su historial de pagos.`)) {
+      return;
+    }
+
+    setError('');
+    setMensaje('');
+    try {
+      await anularCuotaService(cuota.id_cuota);
+      setMensaje(`Cuota ${cuota.periodo} anulada. Se conservó su historial de pagos.`);
+      await cargarTodo();
+    } catch (err) {
+      setError(err.response?.data?.detail || 'No se pudo anular la cuota.');
+    }
   };
 
   // Vista previa del Patrón Strategy en el Frontend (Espejo del Backend)
@@ -324,7 +345,7 @@ export const Cuotas = () => {
                 </td>
                 {usuario?.rol !== 'CLIENTE' && (
                   <td>
-                    {c.estado !== 'PAGADA' && saldo > 0 ? (
+                    {c.estado !== 'PAGADA' && c.estado !== 'ANULADA' && saldo > 0 ? (
                       <button
                         type="button"
                         onClick={() => abrirFormularioCobro(c)}
@@ -332,7 +353,16 @@ export const Cuotas = () => {
                         Cobrar
                       </button>
                     ) : (
-                      <span>Completada</span>
+                      <span>{c.estado === 'ANULADA' ? 'Anulada' : 'Completada'}</span>
+                    )}
+                    {usuario?.rol === 'ADMIN' && c.estado !== 'ANULADA' && (
+                      <button
+                        type="button"
+                        className="btn-cancel"
+                        onClick={() => handleAnularCuota(c)}
+                      >
+                        Anular
+                      </button>
                     )}
                   </td>
                 )}

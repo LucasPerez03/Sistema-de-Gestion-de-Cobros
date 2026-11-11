@@ -1,4 +1,5 @@
 from typing import List, Optional
+from psycopg2.errors import UniqueViolation
 from psycopg2.extras import RealDictCursor
 from backend.app.config.database import DatabaseConnection
 from backend.app.repositories.base_repository import BaseRepository
@@ -32,7 +33,11 @@ class ClienteRepository(BaseRepository):
         """
         conn = self.db.get_connection()
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
-            cursor.execute(query, datos)
+            try:
+                cursor.execute(query, datos)
+            except UniqueViolation:
+                conn.rollback()
+                raise
             nuevo_cliente = cursor.fetchone()
             conn.commit()
             return nuevo_cliente
@@ -53,7 +58,11 @@ class ClienteRepository(BaseRepository):
         parametros["id_cliente"] = id_cliente
         conn = self.db.get_connection()
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
-            cursor.execute(query, parametros)
+            try:
+                cursor.execute(query, parametros)
+            except UniqueViolation:
+                conn.rollback()
+                raise
             cliente_actualizado = cursor.fetchone()
             conn.commit()
             return cliente_actualizado

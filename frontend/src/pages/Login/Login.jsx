@@ -27,7 +27,8 @@ export const Login = () => {
 
   return (
     <div className="login-container">
-      <h2>Iniciar Sesión - BYPay</h2>
+      <h2>¡Bienvenido a ByPay!</h2>
+      <h3>Ingrese sus Credenciales para Iniciar Sesión</h3>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Email:</label>

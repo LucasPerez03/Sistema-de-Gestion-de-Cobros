@@ -1,4 +1,5 @@
 from typing import List, Optional
+from psycopg2.errors import UniqueViolation
 from psycopg2.extras import RealDictCursor
 from backend.app.config.database import DatabaseConnection
 from backend.app.repositories.base_repository import BaseRepository
@@ -45,7 +46,11 @@ class UsuarioRepository(BaseRepository):
         """
         conn = self.db.get_connection()
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
-            cursor.execute(query, datos)
+            try:
+                cursor.execute(query, datos)
+            except UniqueViolation:
+                conn.rollback()
+                raise
             nuevo_usuario = cursor.fetchone()
             conn.commit()
 
@@ -55,9 +60,15 @@ class UsuarioRepository(BaseRepository):
         return nuevo_usuario
 
     def actualizar(self, id_usuario: int, datos: dict) -> Optional[dict]:
+        desvincular_cliente = "id_cliente" in datos and datos["id_cliente"] is None
+        datos_actualizables = {
+            clave: valor for clave, valor in datos.items() if clave != "id_cliente"
+        } if desvincular_cliente else datos
         campos, parametros = self._preparar_actualizacion(
-            datos, self._CAMPOS_ACTUALIZABLES
+            datos_actualizables, self._CAMPOS_ACTUALIZABLES
         )
+        if desvincular_cliente:
+            campos.append("id_cliente = NULL")
         if not campos:
             return self.obtener_por_id(id_usuario)
 
@@ -70,7 +81,11 @@ class UsuarioRepository(BaseRepository):
         parametros["id_usuario"] = id_usuario
         conn = self.db.get_connection()
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
-            cursor.execute(query, parametros)
+            try:
+                cursor.execute(query, parametros)
+            except UniqueViolation:
+                conn.rollback()
+                raise
             usuario_actualizado = cursor.fetchone()
             conn.commit()
             return usuario_actualizado

@@ -2,6 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import List
 from fastapi import HTTPException, status
+from backend.app.models.cuota import EstadoCuota
 from backend.app.models.pago import Pago
 from backend.app.repositories.pago_repository import PagoRepository
 from backend.app.services.cuota_service import CuotaService
@@ -16,6 +17,11 @@ class PagoService:
 
     def registrar_pago(self, datos_pago: PagoCreate, id_usuario_cobrador: int) -> dict:
         cuota_dict = self.cuota_service.obtener_cuota_por_id(datos_pago.id_cuota)
+        if EstadoCuota(cuota_dict["estado"]) == EstadoCuota.ANULADA:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No se pueden registrar pagos en una cuota anulada.",
+            )
         cuota_entidad = self.cuota_service.construir_entidad_cuota(cuota_dict)
         
         saldo_actual = cuota_entidad.calcular_saldo()

@@ -1,6 +1,7 @@
 from typing import List
 from decimal import Decimal
 from fastapi import HTTPException, status
+from psycopg2.errors import UniqueViolation
 from backend.app.models.cuota import Cuota, EstadoCuota
 from backend.app.models.pago import Pago
 from backend.app.repositories.cliente_repository import ClienteRepository
@@ -91,8 +92,23 @@ class CuotaService:
 
         datos = datos_cuota.model_dump()
         datos["estado"] = EstadoCuota.PENDIENTE.value
-        return self.cuota_repo.crear(datos)
+        try:
+            return self.cuota_repo.crear(datos)
+        except UniqueViolation as exc:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Ya existe una cuota para ese cliente, servicio y período.",
+            ) from exc
 
     def eliminar_cuota(self, id_cuota: int) -> bool:
         self.obtener_cuota_por_id(id_cuota)
         return self.cuota_repo.eliminar(id_cuota)
+
+    def anular_cuota(self, id_cuota: int) -> dict:
+        cuota = self.obtener_cuota_por_id(id_cuota)
+        if EstadoCuota(cuota["estado"]) == EstadoCuota.ANULADA:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="La cuota ya se encuentra anulada.",
+            )
+        return self.cuota_repo.actualizar(id_cuota, {"estado": EstadoCuota.ANULADA.value})

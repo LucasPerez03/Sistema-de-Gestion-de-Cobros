@@ -1,0 +1,38 @@
+.login-container {
+  width: min(100% - 40px, 460px);
+  margin: clamp(48px, 12vh, 120px) auto;
+  padding: 38px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.login-container h2 {
+  margin: 0 0 28px;
+  font-size: 1.75rem;
+}
+
+.login-container form,
+.form-group {
+  display: grid;
+  gap: 16px;
+}
+
+.form-group label {
+  margin-bottom: -10px;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+
+.login-container form button {
+  margin-top: 4px;
+}
+
+@media (max-width: 640px) {
+  .login-container {
+    margin: 32px auto;
+    padding: 26px 22px;
+  }
+}

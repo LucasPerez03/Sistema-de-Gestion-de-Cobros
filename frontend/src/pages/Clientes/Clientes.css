@@ -1,0 +1,25 @@
+.clientes-container {
+  width: min(100% - 40px, 1200px);
+  margin: 0 auto;
+  padding: 36px 0 56px;
+}
+
+.clientes-container > h3 {
+  margin: 28px 0 14px;
+}
+
+.clientes-container .btn-toggle,
+.clientes-container .btn-danger,
+.clientes-container .btn-cancel {
+  height: 34px;
+  min-height: 34px;
+  padding: 7px 11px;
+  font-size: 0.84rem;
+}
+
+@media (max-width: 640px) {
+  .clientes-container {
+    width: min(100% - 28px, 1200px);
+    padding-top: 22px;
+  }
+}

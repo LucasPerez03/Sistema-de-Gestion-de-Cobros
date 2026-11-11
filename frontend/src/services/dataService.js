@@ -11,6 +11,11 @@ export const createClienteService = async (clienteData) => {
   return response.data;
 };
 
+export const updateClienteService = async (idCliente, clienteData) => {
+  const response = await api.put(`/clientes/${idCliente}`, clienteData);
+  return response.data;
+};
+
 // USUARIOS //
 export const getUsuariosService = async () => {
   const response = await api.get('/usuarios/');
@@ -19,6 +24,11 @@ export const getUsuariosService = async () => {
 
 export const createUsuarioService = async (userData) => {
   const response = await api.post('/usuarios/', userData);
+  return response.data;
+};
+
+export const updateUsuarioService = async (idUsuario, userData) => {
+  const response = await api.put(`/usuarios/${idUsuario}`, userData);
   return response.data;
 };
 
@@ -61,6 +71,11 @@ export const createCuotaService = async (cuotaData) => {
 
 export const deleteCuotaService = async (idCuota) => {
   const response = await api.delete(`/cuotas/${idCuota}`);
+  return response.data;
+};
+
+export const anularCuotaService = async (idCuota) => {
+  const response = await api.post(`/cuotas/${idCuota}/anular`);
   return response.data;
 };
 

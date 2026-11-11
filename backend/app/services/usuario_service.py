@@ -1,6 +1,7 @@
 from typing import List, Optional
 import bcrypt
 from fastapi import HTTPException, status
+from psycopg2.errors import UniqueViolation
 from backend.app.repositories.usuario_repository import UsuarioRepository
 from backend.app.schemas.usuario import UsuarioCreate, UsuarioUpdate
 
@@ -19,7 +20,7 @@ class UsuarioService:
         usuario_existente = self.usuario_repo.obtener_por_email(datos_usuario.email)
         if usuario_existente:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
+                status_code=status.HTTP_409_CONFLICT,
                 detail="El email ya se encuentra registrado en el sistema."
             )
 
@@ -27,8 +28,13 @@ class UsuarioService:
         datos_dict["password"] = self._hash_password(datos_usuario.password)
         datos_dict["estado"] = True
 
-        nuevo_usuario = self.usuario_repo.crear(datos_dict)
-        return nuevo_usuario
+        try:
+            return self.usuario_repo.crear(datos_dict)
+        except UniqueViolation as exc:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="El email ya se encuentra registrado en el sistema.",
+            ) from exc
 
     def obtener_usuarios(self) -> List[dict]:
         return self.usuario_repo.obtener_todos()
@@ -47,7 +53,13 @@ class UsuarioService:
         datos_dict = datos_usuario.model_dump(exclude_unset=True)
         if "password" in datos_dict and datos_dict["password"]:
             datos_dict["password"] = self._hash_password(datos_dict["password"])
-        return self.usuario_repo.actualizar(id_usuario, datos_dict)
+        try:
+            return self.usuario_repo.actualizar(id_usuario, datos_dict)
+        except UniqueViolation as exc:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="El email ya se encuentra registrado en el sistema.",
+            ) from exc
 
     def eliminar_usuario(self, id_usuario: int) -> bool:
         self.obtener_usuario_por_id(id_usuario)

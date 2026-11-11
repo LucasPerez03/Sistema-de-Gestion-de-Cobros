@@ -5,6 +5,7 @@ from fastapi import HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from backend.app.config.settings import settings
+from backend.app.repositories.usuario_repository import UsuarioRepository
 from backend.app.schemas.auth import RolUsuario, TokenData
 
 security_scheme = HTTPBearer()
@@ -37,26 +38,20 @@ def get_current_user(auth: HTTPAuthorizationCredentials = Depends(security_schem
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         id_usuario: int = payload.get("id_usuario")
-        email: str = payload.get("sub")
-        rol: str = payload.get("rol")
-        id_usuario: int = payload.get("id_usuario")
-        email: str = payload.get("sub")
-        rol: str = payload.get("rol")
-        id_cliente: Optional[int] = payload.get("id_cliente")
 
-        if email is None or id_usuario is None or rol is None:
+        if id_usuario is None:
             raise credentials_exception
 
-        try:
-            rol_usuario = RolUsuario(rol)
-        except ValueError:
+        usuario = UsuarioRepository().obtener_por_id(id_usuario)
+        if not usuario or not usuario["estado"]:
             raise credentials_exception
 
+        rol_usuario = RolUsuario(usuario["rol"])
         return TokenData(
-            id_usuario=id_usuario,
-            email=email,
+            id_usuario=usuario["id_usuario"],
+            email=usuario["email"],
             rol=rol_usuario,
-            id_cliente=id_cliente,
+            id_cliente=usuario.get("id_cliente"),
         )
     except (JWTError, TypeError, ValueError):
         raise credentials_exception
