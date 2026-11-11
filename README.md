@@ -63,7 +63,7 @@ psql -U postgres -d bypay_db -f backend/schema.sql
 
 ```powershell
 python -m venv backend/.venv
-backend/.venv/Scripts/Activate.ps1
+.\backend\.venv\Scripts\Activate.ps1
 python -m pip install -r backend/requirements.txt
 ```
 
@@ -90,7 +90,7 @@ Abre dos terminales desde la raíz del repositorio.
 Terminal 1, API:
 
 ```powershell
-backend/.venv/Scripts/Activate.ps1
+.\backend\.venv\Scripts\Activate.ps1
 uvicorn backend.app.main:app --reload
 ```
 
